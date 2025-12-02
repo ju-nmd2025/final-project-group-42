@@ -1,47 +1,78 @@
-import platform from "platform";
-import { Character } from "./character";
+import {Platform} from "platform";
+import {Character} from "./character";
 
-function setup() {
-    createCanvas(canvasWidth, canvasHeight);
+function setup(){
+    createCanvas(canvasX, canvasY); //inputable for diff screens
 }
 
-// Obstacle / Spike / Death
-function drawObstacle() {
-    push();
-    fill("red");
-    triangle(180, 300, 210, 240, 240, 300);
-    pop();
-}
+let canvasX = 300;
+let canvasY = 600;
+let character = new Character(100, 50, 25, 25);
+let deathFloor = canvasY+ character.h/2;
 
-let canvasWidth = 400;
-let canvasHeight = 400;
-let floor = 300;
-let character = new Character(50, 50, 50, 50);
+let characterHorizontalMoveSpeed = 7;
 
-function draw() {
-    background(100, 100, 100);
+let accelerationOfGravity = 2;
+let fallSpeed = 0;
+
+let platforms = [
+    new Platform(75, 550, 100, 25),
+    new Platform(150, 450, 100, 25)];
+
+function draw(){
+    background(170, 220, 170); //color cause im getting dizzy
 
     character.draw();
-    platform.draw();
 
-    platform.x -= 10;
-    if (platform.x + platform.w < 0) {
-        platform.x = 500;
+    for (const platform of platforms) { //the main platform function
+        platform.draw();
+        // platform.y += 2; // platform movement
+
+        // if(platform.y > canvasY){ //later replace with random spawn and then despawn
+        //     platform.y = 0 - platform.h;
+        //     }
     }
 
-    if (
-        character.y + character.h < 300 &&
-        !character.isColliding(character, platform)
-    ) {
-        character.y += 10;
+    characterMove(character); //horizontal shmoovement
+
+    if (characterFall(character, platforms)){ //if true - we fall
+    
+        character.y += 10; //character falling, replace with formula later
     }
-
-    // Floor
-    line(0, floor, canvasWidth, floor);
-}
-
-function keyPressed() {
-    if (character.y + character.h === floor || character.isColliding(character, platform)) {
-        character.y -= 120;
+    if (!characterFall(character, platforms)){
+        character.y -= 170;
     }
 }
+
+function characterMove(character){ //horizontal movement
+    if (character.x > canvasX){
+        character.x = 0 - character.w;
+    }
+    if (character.x + character.w < 0){
+        character.x = canvasX;
+    }
+
+    if (keyIsDown(LEFT_ARROW)){
+        character.x -= characterHorizontalMoveSpeed;
+    }
+    if (keyIsDown(RIGHT_ARROW)){
+        character.x += characterHorizontalMoveSpeed;
+    }
+}
+
+function characterFall(character, platforms){ //should be working but doesnt
+     for (const platform of platforms) {
+       var call = character.isColliding(platform);
+    //console.log({call});
+        if (call) { //checks if character is colliding, if true, then not falling
+            return false;
+        }
+    }
+
+    if (character.y + character.h < deathFloor){ // WORKS
+        return true; 
+    }
+    return false; // if we are in neither of situations then we are not falling
+}
+
+
