@@ -5,6 +5,7 @@ export default class Platform {
         this.y = y;
         this.w = w;
         this.h = h;
+        this.margin = 10
     }
 
     draw() {
