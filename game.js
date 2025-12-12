@@ -11,25 +11,19 @@ const canvasY = 600;
 let character = new Character(100, 50, 25, 25, "lightyellow");
 let collissionCheck = new Character(1, 1, 15, 15, "lightgreen"); // check for future deathstate 
 const deathFloor = canvasY + character.h/2;
+const gravity = 0.4;
+let vy = 0;
 
 const jumpValue = 200; //inputable for testing || replace later maybe with let cameraShift = character.y until a certain point;
 const characterHorizontalMoveSpeed = 8; //maybe i just like values in one place
 
 let platforms = [ //later start with a platform at top that will spawn at randomY beneath, push each new platform to the end of the array, refer to last item in array by [platforms.length - 1] index
     // hav new platforms spawn in the biggest space
-    new Platform(75, 200, 100, 25),
-    new Platform(150, 100, 100, 25),
-    new Platform(130, 300, 100, 25),
-    new Platform(10, 20, 100, 25)];
+    new Platform(75, 500, 100, 25),
+    ];
 
 let newestPlatform = platforms[platforms.length-1];
-
-// function spawnRandomPlatforms(canvasX, platforms){ stolen code from workshop
-//     let maximumXSpawn
-//     let minimumXSpawn
-//     let biggestSpaceX = Math.floor(Math.random()*(maximumXSpawn - minimumXSpawn) + maximumXSpawn)
-//     platforms.push(new Platform(biggestSpaceX, 600, 100, 25))
-// };
+console.log(platforms[platforms.length-1]);
 
 function draw(){ //playstate main draw function
     background(170, 220, 170); //color cause im getting dizzy
@@ -46,6 +40,8 @@ function draw(){ //playstate main draw function
     }
 
     characterMove(character); //horizontal shmoovement
+    
+   spawnPlatform(platforms, canvasX, newestPlatform);
 
     // if ((character.y > (canvasY/2))&&(!character.isColliding())){
     //     for(let platform of platforms){
@@ -68,31 +64,52 @@ function draw(){ //playstate main draw function
     }
 
 } //main draw function end
+
 // move all functions to utilite 
-function createPlatform(platforms, biggestSpaceX){
-    // while the oldest and lowest platform has space up until -(5*platform.h) on y coordinate
+
+// function jump(gravity, velocity, character){
+//     switch character.isColliding{
+//     case true: velocity += gravity;
+//     character.y += velocity;
+//     break;
+//     case false: 
+// }
+// }
+
+// function killingPlatforms(platforms){
+//     if ((platforms[0].y + platform.h) > canvasY){
+//     platforms }
+// }
+
+// function biggestSpaceX(platforms, canvasX, newestPlatform){ //returns array of min and max value for random spawn of next platform
+//     for(const platform of platforms){
+//         let leftSpaceAvailable = [(canvasX - newestPlatform.x), 
+//             [0, newestPlatform.x]];
+//         let rightSpaceAvailable = [(canvasX - newestPlatform.x + newestPlatform.w), 
+//             [(newestPlatform.x + newestPlatform.w), canvasX]];
+
+//         if (leftSpaceAvailable[0] > rightSpaceAvailable[0]){
+//             console.log('left space');
+//             return leftSpaceAvailable;
+//         }
+//         if (leftSpaceAvailable[0] <= rightSpaceAvailable[0]){
+//             console.log('right space');
+//             return rightSpaceAvailable;
+//         }
+//     }
+// }
+
+function spawnPlatform(platforms, canvasX, newestPlatform){
+    //const result = biggestSpaceX (platforms, canvasX, newestPlatform);
+    // let maximumXSpawn = result[1[1]];
+    // let minimumXSpawn = result[1[0]];
+    let randomizedXspawn = Math.floor(Math.random()*(canvasX - 0) + 0);//Math.floor(Math.random()*(maximumXSpawn - minimumXSpawn) + maximumXSpawn);
+    let randomizedYspawn = newestPlatform.y - Math.floor(Math.random()*(200-75) +75);
+    console.log(randomizedYspawn);
+    while(platforms.length <12) //the oldest and lowest platform has space up until -(5*platform.h) on y coordinate
+        console.log('spawn platform');
+        platforms.push (new Platform(randomizedXspawn, randomizedYspawn, 100, 25));
     //it would spawn items above it on randomized y value within x coordinate     newestPlatform.x
-}
-
-function killingPlatforms(platforms){
-    //if ((platforms[0].y + platform.h} > canvasY){
-    //platforms }
-}
-
-function biggestSpaceX(platforms, canvasX){ //returns array of min and max value for random spawn of next platform
-    for(const platform of platforms){
-        let leftSpaceAvailable = [(canvasX - newestPlatform.x - platform.margin), 
-            [0, newestPlatform.x]];
-        let rightSpaceAvailable = [(canvasX - newestPlatform.x + newestPlatform.w + platform.margin), 
-            [(newestPlatform.x + newestPlatform.w), canvasX]];
-
-        if (leftSpaceAvailable[0] > rightSpaceAvailable[0]){
-            return leftSpaceAvailable[1];
-        }
-        if (leftSpaceAvailable[0] <= rightSpaceAvailable[0]){
-            return rightSpaceAvailable[1];
-        }
-    }
 }
 
 function characterMove(character){ //horizontal movement
@@ -102,11 +119,13 @@ function characterMove(character){ //horizontal movement
     if (character.x + character.w < 0){
         character.x = canvasX;
     }
-    if (keyIsDown(LEFT_ARROW)){
+    switch (true) {
+        case keyIsDown(LEFT_ARROW):
         character.x -= characterHorizontalMoveSpeed;
-    }
-    if (keyIsDown(RIGHT_ARROW)){
+        break;
+        case keyIsDown(RIGHT_ARROW):
         character.x += characterHorizontalMoveSpeed;
+        break;
     }
 }
 
