@@ -13,6 +13,15 @@ export default class Character {
     speed = gravity + speed;
     return this.y;}*/
 
+    // function jump(gravity, velocity, character){
+//     switch character.isColliding{
+//     case true: velocity += gravity;
+//     character.y += velocity;
+//     break;
+//     case false: 
+// }
+// }
+
     draw() {
         push();
         fill(this.color);
