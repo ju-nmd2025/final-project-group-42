@@ -6,6 +6,7 @@ export default class Character {
 		this.w = w;
 		this.h = h;
         this.color = color;
+        this.needHeight = 0;
 	}
 
     /*isJumping(fallspeed, gravity){
@@ -32,8 +33,9 @@ export default class Character {
     isColliding(platform) {
         if ( ((this.y + this.h) >= platform.y) &&
              ((this.x + this.w) >= platform.x) &&
-             (this.x <= (platform.x + platform.w)) &&
-            (this.y <=(platform.y + platform.h)))
+             (this.x <= (platform.x + platform.w)) 
+             &&(this.y <=(platform.y + platform.h))
+        )
         {
             return true;
         }

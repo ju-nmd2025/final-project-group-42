@@ -12,7 +12,7 @@ let character = new Character(100, 50, 25, 25, "lightyellow");
 let collissionCheck = new Character(1, 1, 15, 15, "lightgreen"); // check for future deathstate 
 const deathFloor = canvasY + character.h/2;
 const platformMax = 10;
-const gravity = 0.4;
+const gravity = 0.6;
 let velocity = 0;
 
 const jumpValue = 200; //inputable for testing || replace later maybe with let cameraShift = character.y until a certain point;
@@ -25,10 +25,6 @@ let platforms = [ //later start with a platform at top that will spawn at random
 
 function draw(){ //playstate main draw function
     background(170, 220, 170); //color cause im getting dizzy
-
-    if(character.y<0){
-        character.y = 0;
-    }
 
     collissionCheck.draw();
     character.draw();
@@ -47,27 +43,16 @@ function draw(){ //playstate main draw function
 
     characterMove(character); //horizontal shmoovement
 
-    if (characterFall(character, platforms)){ //if true - we fall
-        character.y += 10; //replace with formula later
-        // velocity += gravity;
-        // character.y += velocity;
-        
-    }
-    if (!characterFall(character, platforms)){ //we touching platform? we jump
-        character.y -= jumpValue;
-        // let neededHeight = character.y - jumpValue;
-        // while(character.y > neededHeight){
-        //     velocity -= gravity;
-        //     character.y -= velocity;
-        // }
-        if (character.y < canvasY/2){ // and if we are above this treshold, the platforms !jump
-            for(const platform of platforms){
-            platform.y += jumpValue;//platform.y += velocity;
-            }
-        }
-    }
+    velocity+=gravity;
+    character.y+=velocity;
 
-} //main draw function end
+    if(!characterFall(character, platforms) && velocity >0){
+        velocity= -18;
+    }
+   //if we are falling we falling with formula
+   //if we collide, we jump until the velocity turns 0 and then fall again
+  
+        }//main draw function end
 
 function spawnPlatform(platforms, canvasX){ 
     while(platforms.length < platformMax){
@@ -95,7 +80,7 @@ function characterMove(character){ //horizontal movement
     }
 }
 
-function characterFall(character, platforms){ //should be working but doesnt
+function characterFall(character, platforms){ 
      for (const platform of platforms) {
         if (character.isColliding(platform)) { //checks if character is colliding, if true, then not falling
             return false;
