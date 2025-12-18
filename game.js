@@ -6,25 +6,23 @@ function setup(){
     createCanvas(canvasX, canvasY); //inputable for diff screens :D
 }
 
-const canvasX = 400;
+const canvasX = 600;
 const canvasY = 1000;
 let character = new Character(100, 50, 25, 25, "lightyellow");
 let collissionCheck = new Character(1, 1, 15, 15, "lightgreen"); // check for future deathstate 
 const deathFloor = canvasY + character.h/2;
-const platformMax = 10;
+const platformMax = 12;
 const gravity = 0.6;
 let velocity = 0;
 
-const jumpValue = 200; //inputable for testing || replace later maybe with let cameraShift = character.y until a certain point;
 const characterHorizontalMoveSpeed = 8; //maybe i just like values in one place
 
-let platforms = [ //later start with a platform at top that will spawn at randomY beneath, push each new platform to the end of the array, refer to last item in array by [platforms.length - 1] index
-    // hav new platforms spawn in the biggest space
+let platforms = [  //we start with one origin platform at the bottom that is the reference point for all newly generated platforms above
     new Platform(75, canvasY, 100, 25),
     ];
 
 function draw(){ //playstate main draw function
-    background(170, 220, 170); //color cause im getting dizzy
+    background(170, 220, 170);
 
     collissionCheck.draw();
     character.draw();
@@ -33,26 +31,36 @@ function draw(){ //playstate main draw function
     spawnPlatform(platforms, canvasX);
     }
 
-    for (const platform of platforms) { //the main platform function
+    for (const platform of platforms) { //the platform draw function
         platform.draw();
     }
 
-    if(platforms[0].y > canvasY){
-        platforms.shift();
+    if(platforms[0].y > canvasY + 50){ //if the lowest and oldest platform in the array is below this treshold, it gets nuked from the array 
+        platforms.shift(); //and unrendered (at least from what i saw during failed camera shift test)
     }
 
     characterMove(character); //horizontal shmoovement
 
-    velocity+=gravity;
     character.y+=velocity;
+    velocity+=gravity; //velocity is shared across all stuff that needs it and is constantly dropped by gravity
 
-    if(!characterFall(character, platforms) && velocity >0){
-        velocity= -18;
+    if(velocity > 20){
+        velocity =20; //velocity cap similar to maximum fall speed irl, just to avoid potential mach speeds
     }
-   //if we are falling we falling with formula
-   //if we collide, we jump until the velocity turns 0 and then fall again
+
+    if (character.y < canvasY/3){ //if character reaches this point
+        character.y = canvasY/3;//their coordinate is reset to this point until their velocity makes them go donwwards
+        for(const platform of platforms){
+        platform.y -= velocity; // in the meantime the platforms are made to go down with the same velocity shared across character and platform
+        } //therefore creating the illusion of shmoovement
+    }
+
+    if(!characterFall(character, platforms)){ //if character touches platform 
+        velocity = -20; //the shared velocity is made negative to propel them upwards
+    }
   
-        }//main draw function end
+  
+}//main draw function end
 
 function spawnPlatform(platforms, canvasX){ 
     while(platforms.length < platformMax){
