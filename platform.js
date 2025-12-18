@@ -11,6 +11,7 @@ export default class Platform {
     draw() {
         push();
         fill("Green");
+        rectMode(CORNER);
         rect(this.x, this.y, this.w, this.h);
         pop();
     }

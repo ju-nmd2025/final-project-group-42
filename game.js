@@ -8,12 +8,12 @@ function setup(){
 
 const canvasX = 600;
 const canvasY = 1000;
-let character = new Character(100, 50, 25, 25, "lightyellow");
-let collissionCheck = new Character(1, 1, 15, 15, "lightgreen"); // check for future deathstate 
-const deathFloor = canvasY + character.h/2;
+let character = new Character(100, 50, 25, 25, "lightyellow"); // check for future deathstate 
+const deathFloor = canvasY + character.h;
 const platformMax = 12;
 const gravity = 0.6;
 let velocity = 0;
+let gameHandler = new GameHandler();
 
 const characterHorizontalMoveSpeed = 8; //maybe i just like values in one place
 
@@ -21,10 +21,23 @@ let platforms = [  //we start with one origin platform at the bottom that is the
     new Platform(75, canvasY, 100, 25),
     ];
 
-function draw(){ //playstate main draw function
+function draw(){
+    switch(gameHandler.gameState){
+        case"start":
+            gameHandler.startScreen(canvasX,canvasY);
+            break;
+        case "play":
+            play();
+            break;
+        case "death":
+            gameHandler.deathScreen(canvasX, canvasY);
+            break;
+    }
+}
+
+function play(){ //playstate main draw function
     background(170, 220, 170);
 
-    collissionCheck.draw();
     character.draw();
     
     if (platforms.length < platformMax){
@@ -39,7 +52,7 @@ function draw(){ //playstate main draw function
         platforms.shift(); //and unrendered (at least from what i saw during failed camera shift test)
     }
 
-    characterMove(character); //horizontal shmoovement
+    character.characterMove(characterHorizontalMoveSpeed); //horizontal shmoovement
 
     character.y+=velocity;
     velocity+=gravity; //velocity is shared across all stuff that needs it and is constantly dropped by gravity
@@ -58,8 +71,10 @@ function draw(){ //playstate main draw function
     if(!characterFall(character, platforms)){ //if character touches platform 
         velocity = -20; //the shared velocity is made negative to propel them upwards
     }
-  
-  
+
+    if (character.y > deathFloor) {
+        gameHandler.gameState = "death";
+     } //gameState = "death";
 }//main draw function end
 
 function spawnPlatform(platforms, canvasX){ 
@@ -71,21 +86,13 @@ function spawnPlatform(platforms, canvasX){
     }
 }
 
-function characterMove(character){ //horizontal movement
-    if (character.x > canvasX){
-        character.x = 0 - character.w;
+function mousePressed(){
+    if(gameHandler.gameState === "start"){
+        if (mouseX > width/2 - 75 && mouseX < width/2 + 75 &&
+            mouseY > height/2 - 25 && mouseY < height/2 + 25) {
+            gameHandler.gameState = "play";
     }
-    if (character.x + character.w < 0){
-        character.x = canvasX;
-    }
-    switch (true) {
-        case keyIsDown(LEFT_ARROW):
-        character.x -= characterHorizontalMoveSpeed;
-        break;
-        case keyIsDown(RIGHT_ARROW):
-        character.x += characterHorizontalMoveSpeed;
-        break;
-    }
+}
 }
 
 function characterFall(character, platforms){ 
@@ -97,20 +104,5 @@ function characterFall(character, platforms){
     if (character.y + character.h < deathFloor){ // WORKS
         return true; 
     }
-    collissionCheck.color = "red"; //gameState = "death";
-    return false; // if we are in neither of situations then we are not falling
+    return true; // if we are in neither of situations then we are not falling
 }
-
-// function checkGameState (gameHandler){
-//         switch (gameHandler.gamestate){
-//             case "start" || "end":
-//                 return false;
-//             case "play":
-//             return //call function
-
-//         }
-    //}
-
-//chack wht gamestate we are
-
-//have that if gameState

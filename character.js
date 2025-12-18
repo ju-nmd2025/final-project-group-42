@@ -6,29 +6,33 @@ export default class Character {
 		this.w = w;
 		this.h = h;
         this.color = color;
-        this.needHeight = 0;
 	}
-
-    /*isJumping(fallspeed, gravity){
-    this.y = this.y+speed;
-    speed = gravity + speed;
-    return this.y;}*/
-
-    // function jump(gravity, velocity, character){
-//     switch character.isColliding{
-//     case true: velocity += gravity;
-//     character.y += velocity;
-//     break;
-//     case false: 
-// }
-// }
 
     draw() {
         push();
         fill(this.color);
-            rect(this.x, this.y, this.w, this.h);
+        rectMode(CORNER);
+        rect(this.x, this.y, this.w, this.h);
         pop();
         }
+
+
+        characterMove(thisHorizontalMoveSpeed){ //horizontal movement
+    if (this.x > canvasX){
+        this.x = 0 - this.w;
+    }
+    if (this.x + this.w < 0){
+        this.x = canvasX;
+    }
+    switch (true) {
+        case keyIsDown(LEFT_ARROW):
+        this.x -= thisHorizontalMoveSpeed;
+        break;
+        case keyIsDown(RIGHT_ARROW):
+        this.x += thisHorizontalMoveSpeed;
+        break;
+    }
+}
 
     isColliding(platform) {
         if ( ((this.y + this.h) >= platform.y) &&
