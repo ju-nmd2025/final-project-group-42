@@ -2,6 +2,7 @@ export default class GameHandler{
     constructor() {
         this.gameState = "start";
         this.deathTextSize = 30;
+        this.lifeTextSize = 20;
     }
 
     startScreen(canvasX, canvasY){
@@ -10,7 +11,7 @@ export default class GameHandler{
         textAlign(CENTER);
         textSize(40);
         text("Lessss goooooo", canvasX/2, canvasY/3);
-
+        
         fill("darkgreen");
         rectMode(CENTER);
         rect(canvasX/2, canvasY/2, 150, 50, 10);
@@ -28,6 +29,12 @@ export default class GameHandler{
          }
         textSize(this.deathTextSize);
         text("YOU DIED \n -dark souls sound effect-", canvasX/2, canvasY/3);
-        
+
+        fill("lightgreen");
+        rectMode(CENTER);
+        rect(canvasX/2, canvasY/2, 150, 50, 10);
+        fill("darkgreen");
+        textSize(24);
+        text("life :)", canvasX/2, canvasY/2+10);
     }
 }

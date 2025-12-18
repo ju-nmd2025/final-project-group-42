@@ -18,7 +18,7 @@ let gameHandler = new GameHandler();
 const characterHorizontalMoveSpeed = 8; //maybe i just like values in one place
 
 let platforms = [  //we start with one origin platform at the bottom that is the reference point for all newly generated platforms above
-    new Platform(75, canvasY, 100, 25),
+    new Platform(75, canvasY, 100, 25, 1),
     ];
 
 function draw(){
@@ -53,12 +53,13 @@ function play(){ //playstate main draw function
     }
 
     character.characterMove(characterHorizontalMoveSpeed); //horizontal shmoovement
+    platform_move(platforms, canvasX);
 
     character.y+=velocity;
     velocity+=gravity; //velocity is shared across all stuff that needs it and is constantly dropped by gravity
 
-    if(velocity > 20){
-        velocity =20; //velocity cap similar to maximum fall speed irl, just to avoid potential mach speeds
+    if(velocity > 30){
+        velocity = 30; //velocity cap similar to maximum fall speed irl, just to avoid potential mach speeds
     }
 
     if (character.y < canvasY/3){ //if character reaches this point
@@ -72,25 +73,48 @@ function play(){ //playstate main draw function
         velocity = -20; //the shared velocity is made negative to propel them upwards
     }
 
-    if (character.y > deathFloor) {
-        gameHandler.gameState = "death";
-     } //gameState = "death";
 }//main draw function end
 
 function spawnPlatform(platforms, canvasX){ 
     while(platforms.length < platformMax){
             let newestPlatform = platforms[platforms.length-1];
-            let randomizedXspawn = Math.floor(random(0, canvasX-newestPlatform.w));
-            let randomizedYspawn = newestPlatform.y - Math.floor(random(50, 150));
-            platforms.push (new Platform(randomizedXspawn, randomizedYspawn, 100, 25));
+            let index;
+            let indexProbability = get_random_index();
+            if (indexProbability<=5){
+                index = 2;
+            }else { index =1;
+            }
+            platforms.push (new Platform(Math.floor(random(0, canvasX-newestPlatform.w)), newestPlatform.y - Math.floor(random(60, 200)), 100, 25, index));
+    }
+}
+
+  function get_random_index(){
+        return Math.floor(random(1, 20));
+    }
+
+function platform_move(platforms, canvasX){
+    for (const platform of platforms){
+        if (platform.index === 2){
+            platform.x += (platform.mobility * platform.direction);
+            if (platform.x+platform.w >= canvasX){
+                platform.direction = -1;
+                platform.x = canvasX - platform.w;
+        } else if (platform.x <= 0){
+            platform.direction =1;
+            platform.x = 0;
+        }
+        }
     }
 }
 
 function mousePressed(){
-    if(gameHandler.gameState === "start"){
+    if(gameHandler.gameState === "start" || gameHandler.gameState === "death"){
         if (mouseX > width/2 - 75 && mouseX < width/2 + 75 &&
             mouseY > height/2 - 25 && mouseY < height/2 + 25) {
             gameHandler.gameState = "play";
+            character.y = 10;
+            character.x = canvasX/2;
+            velocity = 0;
     }
 }
 }
@@ -101,8 +125,9 @@ function characterFall(character, platforms){
             return false;
         }
     }
-    if (character.y + character.h < deathFloor){ // WORKS
+    if (character.y < deathFloor){ // if we are above death floor then we fall
         return true; 
     }
-    return true; // if we are in neither of situations then we are not falling
+    gameHandler.gameState = "death";
+    return true; // if we are in neither of situations then we are dead
 }
