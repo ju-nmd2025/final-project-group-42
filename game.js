@@ -134,7 +134,6 @@ function characterFall(character, platforms){
 }
 
 window.setup = setup;
-
 window.draw = draw;
 
 window.addEventListener("click", function (event) {
