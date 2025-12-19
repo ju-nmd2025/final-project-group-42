@@ -54,6 +54,7 @@ function play(){ //playstate main draw function
 
     characterMove(characterHorizontalMoveSpeed); 
     platform_move(platforms, canvasX);
+    platform_mechanics(platforms, character, velocity);
 
     character.y+=velocity;
     velocity+=gravity; //velocity is shared across all stuff that needs it and is constantly dropped by gravity
@@ -80,10 +81,9 @@ function spawnPlatform(platforms, canvasX){
             let newestPlatform = platforms[platforms.length-1];
             let index;
             let indexProbability = get_random_index();
-            if (indexProbability<=5){
-                index = 2;
-            }else { index =1;
-            }
+            index = get_random_index()>= 8 ? 1:
+                index = get_random_index() < 11 ? 2: 
+                    index = get_random_index() < 11 ? 3: 4;
             platforms.push (new Platform(Math.floor(random(0, canvasX-newestPlatform.w)), newestPlatform.y - Math.floor(random(60, 200)), 100, 25, index));
     }
 }
@@ -92,16 +92,29 @@ function spawnPlatform(platforms, canvasX){
         return Math.floor(random(1, 20));
     }
 
+function platform_mechanics(platforms, character, velocity){
+    for (const platform of platforms){
+        if (platform.index === 3 && character.isColliding(platform)){ //if our index is 3 and we tocuhed the thing at least once
+            platform.breakState = "Broken"; 
+            platform.color = "pink";//this particular platform becomes a pink
+        } 
+    }
+}
+
 function platform_move(platforms, canvasX){
+
     for (const platform of platforms){
         if (platform.index === 2){
+
             platform.x += (platform.mobility * platform.direction);
+
             if (platform.x+platform.w >= canvasX){
                 platform.direction = -1;
                 platform.x = canvasX - platform.w;
-        } else if (platform.x <= 0){
-            platform.direction =1;
-            platform.x = 0;
+
+            } else if (platform.x <= 0){
+                platform.direction =1;
+                platform.x = 0;
         }
         }
     }
@@ -111,10 +124,10 @@ function mousePressed(){
     if(gameHandler.gameState === "start" || gameHandler.gameState === "death"){
         if (mouseX > width/2 - 75 && mouseX < width/2 + 75 &&
             mouseY > height/2 - 25 && mouseY < height/2 + 25) {
-            gameHandler.gameState = "play";
-            character.y = 10;
-            character.x = canvasX/2;
-            velocity = 0;
+                gameHandler.gameState = "play";
+                character.y = 10;
+                character.x = canvasX/2;
+                velocity = 0;
     }
 }
 }
@@ -137,10 +150,21 @@ function characterMove(thisHorizontalMoveSpeed){ //horizontal movement
 }
 
 function characterFall(character, platforms){ 
-     for (const platform of platforms) {
+    for (const platform of platforms) {
+
+        if (platform.index === 3 && platform.breakState === "Broken") continue; //skip to next platform
+
         if (character.isColliding(platform)) { //checks if character is colliding, if true, then not falling
-            return false;
+            if (platform.index === 3){ //if our index is 3 and we tocuhed the thing at least once
+            platform.breakState = "Broken"; 
+            platform.color = "pink";//this particular platform becomes a pink
+        }   
+        if (platform.index === 4){
+            velocity = -40;
+            return true;
         }
+        return false;
+    }
     }
     if (character.y < deathFloor){ // if we are above death floor then we fall
         return true; 

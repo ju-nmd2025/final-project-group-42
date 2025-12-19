@@ -5,22 +5,28 @@ export default class Platform {
         this.y = y;
         this.w = w;
         this.h = h;
-        this.index = i;
+        this.index = i; //sprry but im too lazy to change it across the game into smth other :(((
 
-        if (this.index === 1){
+        switch (this.index){
+            case 1 :
             this.color = "Green";
-        }else if (this.index === 2){
+            break;
+            case 2 :
             this.color = "White";
             this.mobility = 2;
             this.direction = random() > 0.5? 1 : -1;
-        }
+            break;
+            case 3 :
+            this.color = "red";
+            this.breakState = "Unbroken";
+            break;
+            case 4 :
+            this.color = "blue";
+            break;
+        } 
     }
 
     draw() {
-        // if(this.index === 1){
-        //     this.x += this.mobility;
-        //     if (this.x + this.w > canvasX)
-        // }
         push();
         fill(this.color);
         rectMode(CORNER);
