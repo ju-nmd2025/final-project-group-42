@@ -80,7 +80,6 @@ function spawnPlatform(platforms, canvasX){
     while(platforms.length < platformMax){
             let newestPlatform = platforms[platforms.length-1];
             let index;
-            let indexProbability = get_random_index();
             index = get_random_index()>= 8 ? 1:
                 index = get_random_index() < 11 ? 2: 
                     index = get_random_index() < 11 ? 3: 4;
@@ -125,6 +124,7 @@ function mousePressed(){
         if (mouseX > width/2 - 75 && mouseX < width/2 + 75 &&
             mouseY > height/2 - 25 && mouseY < height/2 + 25) {
                 gameHandler.gameState = "play";
+                gameHandler.deathTextSize = 30;
                 character.y = 10;
                 character.x = canvasX/2;
                 velocity = 0;

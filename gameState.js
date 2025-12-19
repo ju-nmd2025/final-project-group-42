@@ -2,7 +2,6 @@ export default class GameHandler{
     constructor() {
         this.gameState = "start";
         this.deathTextSize = 30;
-        this.lifeTextSize = 20;
     }
 
     startScreen(canvasX, canvasY){
