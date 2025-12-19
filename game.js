@@ -1,7 +1,6 @@
 import {Platform} from "./platform.js";
 import {Character} from "./character.js";
 import {GameHandler} from "./gameState.js";
-type="module";
 
 function setup(){
     createCanvas(canvasX, canvasY); //inputable for diff screens :D
