@@ -38,3 +38,4 @@ export default class GameHandler{
         text("life :)", canvasX/2, canvasY/2+10);
     }
 }
+export { GameHandler };

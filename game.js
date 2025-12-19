@@ -1,6 +1,7 @@
-import platform, {Platform} from "platform";
-import {Character} from "./character";
-import {GameHandler} from "gameState";
+import platform, {Platform} from "platform.js";
+import {Character} from "./character.js";
+import {GameHandler} from "gameState.js";
+type="module";
 
 function setup(){
     createCanvas(canvasX, canvasY); //inputable for diff screens :D
@@ -131,3 +132,15 @@ function characterFall(character, platforms){
     gameHandler.gameState = "death";
     return true; // if we are in neither of situations then we are dead
 }
+
+window.setup = setup;
+
+window.draw = draw;
+
+window.addEventListener("click", function (event) {
+    mousePressed();
+});
+
+window.addEventListener("keydown", function (event) {
+    keyIsDown();
+});

@@ -28,3 +28,4 @@ export default class Platform {
         pop();
     }
 }
+export { Platform };
