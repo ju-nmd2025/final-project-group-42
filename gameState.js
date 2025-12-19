@@ -24,7 +24,6 @@ export default class GameHandler{
         background(50, 0, 0);
         fill(255, 0, 0);
         textAlign(CENTER);
-        this.deathTextSize = 30;
          if (this.deathTextSize <50){
             this.deathTextSize+=0.5;
          }
