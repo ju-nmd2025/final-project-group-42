@@ -52,7 +52,7 @@ function play(){ //playstate main draw function
         platforms.shift(); //and unrendered (at least from what i saw during failed camera shift test)
     }
 
-    character.characterMove(characterHorizontalMoveSpeed); //horizontal shmoovement
+    characterMove(characterHorizontalMoveSpeed); 
     platform_move(platforms, canvasX);
 
     character.y+=velocity;
@@ -119,6 +119,23 @@ function mousePressed(){
 }
 }
 
+function characterMove(thisHorizontalMoveSpeed){ //horizontal movement
+    if (character.x > canvasX){
+        character.x = 0 - character.w;
+    }
+    if (character.x + character.w < 0){
+        character.x = canvasX;
+    }
+    switch (true) {
+        case keyIsDown(LEFT_ARROW):
+        character.x -= thisHorizontalMoveSpeed;
+        break;
+        case keyIsDown(RIGHT_ARROW):
+        character.x += thisHorizontalMoveSpeed;
+        break;
+    }
+}
+
 function characterFall(character, platforms){ 
      for (const platform of platforms) {
         if (character.isColliding(platform)) { //checks if character is colliding, if true, then not falling
@@ -140,5 +157,9 @@ window.addEventListener("click", function (event) {
 });
 
 window.addEventListener("keydown", function (event) {
-    keyIsDown();
+    keyIsDown(LEFT_ARROW);
+});
+
+window.addEventListener("keydown", function (event) {
+    keyIsDown(RIGHT_ARROW);
 });
